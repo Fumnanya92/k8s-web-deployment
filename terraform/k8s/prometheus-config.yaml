@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'gandalf-web-server'
+    static_configs:
+      - targets: ['<YOUR_APP_SERVICE_IP>:80']
+    metrics_path: '/metrics'
