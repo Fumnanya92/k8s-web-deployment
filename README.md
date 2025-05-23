@@ -306,81 +306,159 @@ This may require administrator privileges.
 
 ## Process & Common Commands
 
-This project is designed to run on Minikube. Below is the typical workflow and key commands, including error handling and rectifications.
+This project is designed to run on Minikube. Below are the typical workflows, showing the evolution from manual `kubectl apply`, to Helm, and now to GitHub Actions CI/CD.
 
-### 1. Start Minikube
-```powershell
-minikube start --driver=docker
-```
+---
 
-### 2. Build and Load Docker Image
-```powershell
-docker build -t gandalf-web:0.3 .
-minikube image load gandalf-web:0.3
-```
+### 🟢 **A. Manual Minikube & kubectl apply Workflow (Initial Approach)**
 
-### 3. Deploy with Helm
-```powershell
-helm install gandalf ./gandalf-chart --namespace default --create-namespace
-```
-If you see an error about an existing ServiceMonitor:
-```powershell
-kubectl delete servicemonitor gandalf-monitor -n monitoring
-helm install gandalf ./gandalf-chart --namespace default --create-namespace
-```
+1. **Start Minikube**
+   ```powershell
+   minikube start --driver=docker
+   ```
 
-### 4. Access the Application
-- **Find your service name:**
-  ```powershell
-  kubectl get svc -n default
-  ```
-- **Access via minikube service:**
-  ```powershell
-  minikube service gandalf -n default --url
-  ```
-  If you see `SVC_NOT_FOUND`, check the actual service name with `kubectl get svc -n default` and use that name.
-- **Or, port-forward:**
-  ```powershell
-  kubectl port-forward svc/gandalf 8080:80 -n default
-  Start your browser at http://localhost:8080
-  ```
+2. **Build and Load Docker Image**
+   ```powershell
+   docker build -t gandalf-web:0.3 .
+   minikube image load gandalf-web:0.3
+   ```
 
-### 5. Upgrade or Rollback
-- **Upgrade image:**
-  ```powershell
-  helm upgrade gandalf ./gandalf-chart --set image.tag=0.4
-  ```
-- **Rollback:**
-  ```powershell
-  helm rollback gandalf 1
-  ```
+3. **Deploy Manifests**
+   ```powershell
+   kubectl apply -f k8s/
+   ```
+   This applies your deployment, service, and ServiceMonitor manifests.
 
-### 6. Monitoring & Prometheus
-- **Prometheus UI:**
-  ```powershell
-  kubectl -n monitoring port-forward svc/monitoring-kube-prometheus-prometheus 9090:9090
-  # Open http://localhost:9090
-  ```
-- **Grafana:**
-  ```powershell
-  minikube service monitoring-grafana -n monitoring --url
-  # Login: admin / prom-operator
-  ```
-- **If ServiceMonitor is not discovered:**
+4. **Access the Application**
+   - Port-forward:
+     ```powershell
+     kubectl port-forward svc/gandalf-web 8080:80
+     ```
+     Visit [http://localhost:8080](http://localhost:8080)
+   - Or, NodePort:
+     ```powershell
+     kubectl get svc gandalf-web
+     ```
+     Access at `http://<minikube-ip>:<node-port>`
+
+5. **Monitoring**
+   - Prometheus:
+     ```powershell
+     kubectl -n monitoring port-forward svc/monitoring-kube-prometheus-prometheus 9090:9090
+     ```
+     Open [http://localhost:9090](http://localhost:9090)
+   - Grafana:
+     ```powershell
+     minikube service monitoring-grafana -n monitoring --url
+     ```
+     Login: `admin` / `prom-operator`
+
+---
+
+### 🟡 **B. Helm-based Workflow (Recommended for Ongoing Use)**
+
+1. **Start Minikube**
+   ```powershell
+   minikube start --driver=docker
+   ```
+
+2. **Build and Load Docker Image (for local dev)**
+   ```powershell
+   docker build -t gandalf-web:0.3 .
+   minikube image load gandalf-web:0.3
+   ```
+   > If using images from Docker Hub (via CI), skip `minikube image load` and set the image tag in Helm.
+
+3. **Deploy with Helm**
+   ```powershell
+   helm install gandalf ./gandalf-chart --namespace default --create-namespace
+   ```
+   - If you see an error about an existing ServiceMonitor:
+     ```powershell
+     kubectl delete servicemonitor gandalf-monitor -n monitoring
+     helm install gandalf ./gandalf-chart --namespace default --create-namespace
+     ```
+
+4. **Access the Application**
+   - Find your service name:
+     ```powershell
+     kubectl get svc -n default
+     ```
+   - Access via Minikube:
+     ```powershell
+     minikube service gandalf -n default --url
+     ```
+     If you see `SVC_NOT_FOUND`, check the actual service name with `kubectl get svc -n default` and use that name.
+   - Or, port-forward:
+     ```powershell
+     kubectl port-forward svc/gandalf 8080:80 -n default
+     ```
+     Open [http://localhost:8080](http://localhost:8080)
+
+5. **Upgrade or Rollback**
+   - Upgrade image:
+     ```powershell
+     helm upgrade gandalf ./gandalf-chart --set image.tag=0.4
+     ```
+   - Rollback:
+     ```powershell
+     helm rollback gandalf 1
+     ```
+
+6. **Monitoring**
+   - Prometheus:
+     ```powershell
+     kubectl -n monitoring port-forward svc/monitoring-kube-prometheus-prometheus 9090:9090
+     ```
+     Open [http://localhost:9090](http://localhost:9090)
+   - Grafana:
+     ```powershell
+     minikube service monitoring-grafana -n monitoring --url
+     ```
+     Login: `admin` / `prom-operator`
+
+---
+
+### 🟣 **C. CI/CD with GitHub Actions (Automated Build & Release)**
+
+1. **Push a Git Tag to Trigger CI/CD**
+   ```sh
+   git tag v0.5
+   git push origin v0.5
+   ```
+   - This triggers the GitHub Actions workflow to:
+     - Build and push your Docker image to Docker Hub.
+     - Package and upload your Helm chart.
+     - (Optionally) Create a GitHub release with the chart attached.
+
+2. **Deploy from Docker Hub Image**
+   - On your cluster:
+     ```powershell
+     helm upgrade --install gandalf ./gandalf-chart --set image.tag=v0.5
+     ```
+
+---
+
+### ⚠️ **Common Errors & Rectifications**
+
+- **SVC_NOT_FOUND:**  
+  Run `kubectl get svc -n default` and use the correct service name with `minikube service ...`.
+
+- **ServiceMonitor already exists:**  
+  Delete it:  
+  `kubectl delete servicemonitor gandalf-monitor -n monitoring`  
+  Then re-run Helm install.
+
+- **Pod stuck in ContainerCreating:**  
+  Restart Minikube:  
+  `minikube stop; minikube start`  
+  Check node status:  
+  `kubectl get nodes`
+
+- **Prometheus not scraping:**  
   - Ensure your service has label `app: gandalf-web` and port name `http`.
   - Ensure ServiceMonitor is in `monitoring` namespace and has `namespaceSelector.matchNames: ["default"]`.
   - Delete and re-apply the ServiceMonitor if needed.
-
-### 7. Common Errors & Rectifications
-- **SVC_NOT_FOUND:**
-  - Run `kubectl get svc -n default` and use the correct service name with `minikube service ...`.
-- **ServiceMonitor already exists:**
-  - Delete it: `kubectl delete servicemonitor gandalf-monitor -n monitoring` and re-run Helm install.
-- **Pod stuck in ContainerCreating:**
-  - Restart Minikube: `minikube stop; minikube start`
-  - Check node status: `kubectl get nodes`
-- **Prometheus not scraping:**
-  - Check ServiceMonitor and service labels/ports.
   - Check Prometheus UI → Status → Targets for errors.
 
 ---
