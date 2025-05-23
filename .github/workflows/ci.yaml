@@ -2,8 +2,7 @@ name: Build & Release Gandalf Web
 
 on:
   push:
-    tags: ["v*"]          # only when you push a tag
-  workflow_dispatch:      # allow manual runs
+  workflow_dispatch:
 
 env:
   # Docker Hub image path:  docker.io/<username>/<repo>:tag
