@@ -2,6 +2,8 @@ name: Build & Release Gandalf Web
 
 on:
   push:
+    tags:
+      - "v*"
   workflow_dispatch:
 
 env:
