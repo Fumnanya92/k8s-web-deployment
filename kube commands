@@ -1,0 +1,50 @@
+Confirm kubectl is talking to Minikube
+
+kubectl get nodes -o wide
+You should see one Ready node called minikube.
+
+Minikube’s docs recommend anything from .2-.254 as long as it’s private IPv4.
+https://minikube.sigs.k8s.io/docs/tutorials/static_ip/?utm_source
+
+MetalLB (Network LoadBalancer ) & Minikube.
+An abstract way to expose an application running on a set of Pods as a network service
+https://medium.com/%40shoaib_masood/metallb-network-loadbalancer-minikube-335d846dfdbe
+
+https://minikube.sigs.k8s.io/docs/handbook/accessing/#access-to-ports-1024-on-windows-requires-root-permission
+Rub nginx Pod:
+kubectl run nginx --image=nginx:alpine --port=80
+
+Expose the Pod as a LoadBalancer Service:
+kubectl expose pod nginx --port=80 --type=LoadBalancer --name=nginx-lb \
+  --load-balancer-ip=192.168.49.241
+
+  Verify the Service:
+  kubectl get svc nginx-lb
+
+  docker build --no-cache -t gandalf-web:0.3 .
+minikube image load gandalf-web:0.3
+
+# patch the running deployment
+kubectl set image deploy/gandalf-web web=gandalf-web:0.3
+
+kubectl rollout status deploy/gandalf-web       # wait for “successfully rolled out”
+kubectl port-forward svc/gandalf-web 8080:80
+
+Appliying yaml files
+kubectl apply -f monitoring/gandalf-servicemonitor.yaml
+
+running prometheus with port 9090:9090
+$ kubectl -n monitoring port-forward svc/monitoring-kube-prometheus-prometheus 9090:9090   or kubectl apply -f k8s/
+That will pick up all three manifests in one shot.
+
+Check Node Status
+kubectl get nodes
+
+checking of specific image 
+kubectl get deploy gandalf-web -o yaml | grep image:
+
+rollout configuration 
+kubectl rollout status deploy/gandalf-web
+
+Check resources:
+kubectl get all -l app.kubernetes.io/instance=gandalf -n default

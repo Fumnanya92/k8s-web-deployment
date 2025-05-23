@@ -1,0 +1,13 @@
+{{/* filepath: gandalf-chart/templates/_helpers.tpl */}}
+{{- define "gandalf-chart.fullname" -}}
+{{- printf "%s" .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- end }}
+
+{{- define "gandalf-chart.name" -}}
+{{- printf "%s" .Chart.Name | trunc 63 | trimSuffix "-" -}}
+{{- end }}
+
+{{- define "gandalf-chart.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "gandalf-chart.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

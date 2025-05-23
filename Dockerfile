@@ -1,11 +1,14 @@
-FROM python:3.9-slim
+FROM python:3.12-slim
 
-WORKDIR /app
+# security: non-root runtime user
+RUN addgroup --system app && adduser --system --ingroup app app
 
+WORKDIR /app               
 COPY requirements.txt .
-
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY src/ .
+COPY src/ .                    
 
-CMD ["python", "server.py"]
+USER app
+EXPOSE 80
+CMD ["gunicorn", "--bind", "0.0.0.0:80", "main:app"] 

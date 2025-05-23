@@ -75,11 +75,12 @@
 <body>
     <div class="container">
         <h1>Gandalf Web Server</h1>
-        <div class="subtitle">A simple web app showing Gandalf's picture and the current time in Colombo, Sri Lanka.</div>
+        <div class="subtitle">A simple web app showing Gandalf's picture.</div>
         <img class="gandalf-img" src="{{ image_url }}" alt="Gandalf">
-        <div class="time-box">
-            <h2>Current Time in Colombo</h2>
-            <p style="font-size:1.5em; margin:0;">{{ colombo_time }}</p>
+        <div style="margin: 24px 0;">
+            <button onclick="window.location.href='/colombo'" style="padding: 14px 32px; font-size: 1.1em; border-radius: 8px; border: none; background: #4a90e2; color: #fff; cursor: pointer; box-shadow: 0 2px 8px rgba(74,144,226,0.15); transition: background 0.2s;">
+                Show Colombo Time
+            </button>
         </div>
         <div class="metrics-link">
             Prometheus metrics available at <a href="/metrics">/metrics</a>

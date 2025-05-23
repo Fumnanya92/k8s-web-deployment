@@ -1,0 +1,19 @@
+{{- if and .Values.monitoring (eq (toString (.Values.monitoring.enabled | default "false")) "true") }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "gandalf-chart.fullname" . }}-monitor
+  namespace: monitoring
+  labels:
+    release: monitoring
+    {{- include "gandalf-chart.selectorLabels" . | nindent 4 }}
+spec:
+  namespaceSelector:
+    matchNames: [ "default" ]
+  selector:
+    matchLabels: {{- include "gandalf-chart.selectorLabels" . | nindent 6 }}
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 15s
+{{- end }}
