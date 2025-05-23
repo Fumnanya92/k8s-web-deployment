@@ -380,15 +380,11 @@ This project is designed to run on Minikube. Below are the typical workflows, sh
      ```
 
 4. **Access the Application**
-   - Find your service name:
+   - After Helm install, check your service name:
      ```powershell
      kubectl get svc -n default
      ```
-   - Access via Minikube:
-     ```powershell
-     minikube service gandalf -n default --url
-     ```
-     If you see `SVC_NOT_FOUND`, check the actual service name with `kubectl get svc -n default` and use that name.
+     Then use that name with minikube service ...
    - Or, port-forward:
      ```powershell
      kubectl port-forward svc/gandalf 8080:80 -n default
