@@ -36,6 +36,10 @@ def colombo():
 def metrics():
     return generate_latest(), 200, {"Content-Type": "text/plain; version=0.0.4"}
 
+@app.route("/colombo/time")
+def colombo_time_api():
+    return jsonify({"colombo_time": get_colombo_time()})
+
 # ----- Helpers -------------------------------------------------------------
 
 def get_colombo_time() -> str:

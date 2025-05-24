@@ -50,7 +50,7 @@ curl -Lo minikube.deb https://storage.googleapis.com/minikube/releases/latest/mi
 dpkg -i minikube.deb
 rm minikube.deb
 
-su - "$OS_USER" -c 'minikube start --driver=docker --wait=true && minikube addons enable metrics-server'
+su - "$OS_USER" -c 'sudo minikube start --driver=none --kubernetes-version=v1.32.0 --wait=true && sudo minikube addons enable metrics-server'
 
 ###############################################################################
 # 3.  MetalLB                                                               

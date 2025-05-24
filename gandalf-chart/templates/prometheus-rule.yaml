@@ -1,0 +1,23 @@
+{{- if .Values.monitoring.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "gandalf-chart.fullname" . }}-rules
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  groups:
+  - name: gandalf.rules
+    rules:
+    - alert: GandalfNoTraffic
+      expr: rate(gandalf_requests_total[5m]) == 0
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        summary: "No traffic on /gandalf for 10 minutes"
+        description: |
+          The Gandalf web server hasn't received any requests in the last 10 minutes.
+          Check if the deployment is down or if the upstream service has an issue.
+{{- end }}

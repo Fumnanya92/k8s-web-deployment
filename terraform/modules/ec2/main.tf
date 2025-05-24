@@ -45,14 +45,11 @@ resource "aws_instance" "gandalf" {
   key_name               = var.key_name
 
   private_ip            = var.app_private_ip
-  secondary_private_ips = [var.grafana_private_ip]
+  # secondary_private_ips = [var.grafana_private_ip]
 
-  user_data = templatefile("${path.module}/minikube.sh", {
+  user_data = templatefile("${path.module}/userdata.sh", {
     IMAGE_TAG          = var.image_tag
     DOCKERHUB_USERNAME = var.dockerhub_user
-    STATIC_APP_IP      = var.app_private_ip     # used for Service .loadBalancerIP
-    STATIC_POOL_START  = var.app_private_ip     # first IP in MetalLB pool
-    STATIC_POOL_END    = var.grafana_private_ip # last  IP in MetalLB pool
   })
 
   tags = { Name = "gandalf" }
@@ -62,10 +59,4 @@ resource "aws_eip" "app" {
   instance                  = aws_instance.gandalf.id
   associate_with_private_ip = var.app_private_ip
   tags                      = { Name = "gandalf-app-eip" }
-}
-
-resource "aws_eip" "grafana" {
-  instance                  = aws_instance.gandalf.id
-  associate_with_private_ip = var.grafana_private_ip
-  tags                      = { Name = "gandalf-grafana-eip" }
 }

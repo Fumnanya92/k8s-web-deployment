@@ -55,11 +55,11 @@ variable "app_private_ip" {
   default     = "10.0.1.241"
 }
 
-variable "grafana_private_ip" {
-  description = "Grafana static private IP"
-  type        = string
-  default     = "10.0.1.242"
-}
+# variable "grafana_private_ip" {
+#   description = "Grafana static private IP"
+#   type        = string
+#   default     = "10.0.1.242"
+# }
 
 variable "my_ip" {
   description = "Your IP for SSH access"

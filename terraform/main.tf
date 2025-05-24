@@ -12,18 +12,16 @@ module "vpc" {
   availability_zone_2   = var.availability_zone_2
   my_ip                 = var.my_ip
   app_private_ip        = var.app_private_ip
-  grafana_private_ip    = var.grafana_private_ip
 }
 
 # EC2 Module Configuration
 module "ec2" {
-  source             = "./modules/ec2"
-  vpc_id             = module.vpc.vpc_id
-  key_name           = var.key_name
-  security_group_id  = module.vpc.security_group_id
-  app_private_ip     = var.app_private_ip
-  grafana_private_ip = var.grafana_private_ip
-  dockerhub_user     = var.dockerhub_user
-  image_tag          = var.image_tag
-  public_subnet_id   = module.vpc.public_subnet_1_id
+  source            = "./modules/ec2"
+  vpc_id            = module.vpc.vpc_id
+  key_name          = var.key_name
+  security_group_id = module.vpc.security_group_id
+  app_private_ip    = var.app_private_ip
+  dockerhub_user   = var.dockerhub_user
+  image_tag        = var.image_tag
+  public_subnet_id = module.vpc.public_subnet_1_id
 }

@@ -1,0 +1,34 @@
+{
+  "uid": "gandalf",
+  "title": "Gandalf Web – Traffic",
+  "tags": ["gandalf", "demo"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Gandalf requests",
+      "datasource": "Prometheus",
+      "targets": [
+        { "expr": "gandalf_requests_total", "legendFormat": "total" }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "req", "color": { "mode": "palette-classic" } }
+      },
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 }
+    },
+    {
+      "type": "stat",
+      "title": "Colombo requests",
+      "datasource": "Prometheus",
+      "targets": [
+        { "expr": "colombo_requests_total", "legendFormat": "total" }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "req", "color": { "mode": "palette-classic" } }
+      },
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 }
+    }
+  ]
+}

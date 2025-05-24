@@ -35,10 +35,6 @@ variable "app_private_ip" {
   type        = string
 }
 
-variable "grafana_private_ip" {
-  description = "Grafana static private IP"
-  type        = string
-}
 
 variable "my_ip" {
   description = "Your IP for SSH access"

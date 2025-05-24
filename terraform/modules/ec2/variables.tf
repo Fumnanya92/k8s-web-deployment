@@ -8,10 +8,6 @@ variable "security_group_id" {
   type        = string
 }
 
-# variable "subnet_id" {
-#     description = "Subnet ID to launch the instance in"
-#       type        = string
-# }
 
 variable "key_name" {
   description = "Name of the SSH key pair"
@@ -42,11 +38,6 @@ variable "image_tag" {
 
 variable "app_private_ip" {
   description = "App static private IP"
-  type        = string
-}
-
-variable "grafana_private_ip" {
-  description = "Grafana static private IP"
   type        = string
 }
 
