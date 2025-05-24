@@ -71,25 +71,25 @@ locals {
   public_ip = module.ec2.eip_public_ip
 }
 
-output "gandalf_url" {
-  description = "Gandalf Web endpoint"
-  value       = "http://${local.public_ip}/gandalf"
-}
+# output "gandalf_url" {
+#   description = "Gandalf Web endpoint"
+#   value       = "http://${local.public_ip}/gandalf"
+# }
 
-output "colombo_url" {
-  description = "Colombo time endpoint"
-  value       = "http://${local.public_ip}/colombo"
-}
+# output "colombo_url" {
+#   description = "Colombo time endpoint"
+#   value       = "http://${local.public_ip}/colombo"
+# }
 
-output "metrics_url" {
-  description = "Prometheus metrics endpoint"
-  value       = "http://${local.public_ip}/metrics"
-}
+# output "metrics_url" {
+#   description = "Prometheus metrics endpoint"
+#   value       = "http://${local.public_ip}/metrics"
+# }
 
-output "prometheus_url" {
-  description = "Prometheus UI"
-  value       = "http://${local.public_ip}:9090"
-}
+# output "prometheus_url" {
+#   description = "Prometheus UI"
+#   value       = "http://${local.public_ip}:9090"
+# }
 
 output "grafana_url" {
   description = "Grafana UI"

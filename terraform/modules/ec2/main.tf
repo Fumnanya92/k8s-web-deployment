@@ -47,7 +47,7 @@ resource "aws_instance" "gandalf" {
   private_ip            = var.app_private_ip
   # secondary_private_ips = [var.grafana_private_ip]
 
-  user_data = templatefile("${path.module}/userdata.sh", {
+  user_data = templatefile("${path.module}/minikube.sh", {
     IMAGE_TAG          = var.image_tag
     DOCKERHUB_USERNAME = var.dockerhub_user
   })
