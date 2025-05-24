@@ -1,6 +1,6 @@
 name: Terraform & Build→ECR
 
-onx:
+on:
   push:
     branches:
       - my-feature-branch   # runs on pushes to this branch
