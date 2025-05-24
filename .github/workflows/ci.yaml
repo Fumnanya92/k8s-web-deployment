@@ -3,7 +3,8 @@ name: Terraform & Build→ECR
 on:
   push:
     branches:
-      - kstrict
+      - my-feature-branch
+    workflow_dispatch: {}
 
 env:
   AWS_REGION: us-west-2                   # ← change to your region
